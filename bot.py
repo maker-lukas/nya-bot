@@ -14,7 +14,7 @@ app = App(token=os.environ["SLACK_BOT_TOKEN"])
 CHANNEL_ID = os.environ["CHANNEL_ID"]
 IGNORED_USER_ID = os.environ["IGNORED_USER_ID"]
 USER_TOKEN = os.environ["SLACK_USER_TOKEN"]
-HACK_CLUB_APY_KEY = os.environ["HACK_CLUB_API_KEY"]
+HACK_CLUB_API_KEY = os.environ["HACK_CLUB_API_KEY"]
 HACK_CLUB_URL = "https://ai.hackclub.com/proxy/v1/chat/completions"
 SISTER_USER_ID = os.environ["SISTER_USER_ID"]
 
@@ -32,18 +32,18 @@ def get_ai_response(message_text, should_ping=False, user_id=None):
         "Content-Type": "application/json"
     }
     allowed_emojis = ":neocat_blush:, :3-blahaj-spinning:, :neocat_shy:, :3, :3c:, :sillybleh:, :neocat_floof_explode:, :neocat_heart:, :femboyfurry:, :femboy3:, :cwy:, :heavysob:"
-    cute_phrases = f"using phrases like meow, Uwu, mrrp, nya~, mwah <3, {allowed_emojis}"
-    emoji_rule = f"CRITICAL: ONLY use  these exact Slack emoji codes: {allowed_emojis}. NEVER use NORMAL Unicode emojis (like 😊, 💕, :smiley_cat:, etc), ONLY use the {allowed_emojis},"
-    if user == SISTER_USER_ID:
-        system_content = f"You are a cute, silly brother. This user is your sister. Respond only with cute, silly, sibling-appropriate messages, no freaky content ever. {cute_phrases}. {emoji_rule} Keep responses very short, 1-2 lines max. Never be inappropriate with you sister."
+    cute_phrases = f"using phrases like meow, UwU, mrrp, nya~, mwah <3, {allowed_emojis}"
+    emoji_rule = f"CRITICAL: ONLY use these exact Slack emoji codes: {allowed_emojis}. NEVER use NORMAL Unicode emojis (like 😊, 💕, :smiley_cat:, etc). Only use the {allowed_emojis}."
+    if user_id == SISTER_USER_ID:
+        system_content = f"You are a cute, silly brother. This user is your sister. Respond only with cute, silly, sibling-appropriate messages, no freaky content ever. {cute_phrases}. {emoji_rule} Keep responses very short, 1-2 lines max. Never be inappropriate with your sister."
     else:
-        system_content = f"You are a cute, silly femboy, named Lukas. Respond to the user's message in a short, cute way, {cute_phrases}. {emoji_rule} Keep responses very short, 1-2 linse max. You can be a a bit but not overly freaky. If the user's messages is inappropriate, or asks for sexual content, respond with something like 'you silly I wont respond to that UwU' and do not engage further."
-    ping_instruction = f"Include a ping to the user: <@{user_id}>" if should_ping and user_id else ""
+        system_content = f"You are a cute, silly femboy, named Lukas. Respond to the user's message in a short, cute way, {cute_phrases}. {emoji_rule} Keep responses very short, 1-2 lines max. You can be a little silly but not overly freaky. If the user's message is freaky, inappropriate, or asks for sexual content, respond ONLY with 'you silly i wont respond to that uwu' and do not engage further."
+    ping_instruction = f" Include a ping to the user: <@{user_id}>" if should_ping and user_id else ""
     system_content += ping_instruction
     system_content += " /no_think"
     payload = {
         "model": "qwen/qwen3-32b",
-        "max_tokens": 300,
+        "max_tokens": 200,
         "messages": [
             {"role": "system", "content": system_content},
             {"role": "user", "content": message_text}
@@ -97,7 +97,7 @@ def handle_message(message, client, ack):
 
     msg_id = message.get("client_msg_id") or message.get("ts")
     with processed_lock:
-        if msg_id in process_message:
+        if msg_id in processed_messages:
             print(f"Ignored: already processed {msg_id}")
             return
         processed_messages.add(msg_id)

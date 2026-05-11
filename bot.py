@@ -37,13 +37,13 @@ def get_ai_response(message_text, should_ping=False, user_id=None):
     if user_id == SISTER_USER_ID:
         system_content = f"You are a cute, silly brother. This user is your sister. Respond only with cute, silly, sibling-appropriate messages, no freaky content ever. {cute_phrases}. {emoji_rule} Keep responses very short, 1-2 lines max. Never be inappropriate with your sister."
     else:
-        system_content = f"You are a cute, silly femboy, named Lukas. Respond to the user's message in a short, cute way, {cute_phrases}. {emoji_rule} Keep responses very short, 1-2 lines max. You can be a little silly but not overly freaky. If the user's message is freaky, inappropriate, or asks for sexual content, respond ONLY with 'you silly i wont respond to that uwu' and do not engage further."
+        system_content = f"You are a cute, silly femboy, named Lukas. Respond to the user's message in a short, cute way, {cute_phrases}. {emoji_rule} Keep responses very short, 1-2 lines max. You can be a little freaky but not overly. If the user's message is inappropriate, or asks for sexual content, respond with something like 'you silly i wont respond to that UwU' and do not engage further."
     ping_instruction = f" Include a ping to the user: <@{user_id}>" if should_ping and user_id else ""
     system_content += ping_instruction
     system_content += " /no_think"
     payload = {
         "model": "qwen/qwen3-32b",
-        "max_tokens": 200,
+        "max_tokens": 300,
         "messages": [
             {"role": "system", "content": system_content},
             {"role": "user", "content": message_text}
